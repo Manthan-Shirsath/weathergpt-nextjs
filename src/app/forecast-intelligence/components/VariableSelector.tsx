@@ -33,7 +33,7 @@ export function VariableSelector({ activeVariable, onChange }: VariableSelectorP
   ];
 
   return (
-    <div className="flex flex-wrap items-center gap-1.5 p-1.5 rounded-2xl border backdrop-blur-md transition-colors duration-300 bg-fi-surface border-fi-border shadow-xs">
+    <div className="flex flex-wrap items-center gap-1 p-1 rounded-xl border backdrop-blur-md transition-colors duration-300 bg-fi-surface border-fi-border shadow-xs">
       {options.map((opt) => {
         const isActive = activeVariable === opt.id;
         return (
@@ -42,16 +42,16 @@ export function VariableSelector({ activeVariable, onChange }: VariableSelectorP
             id={`var-btn-${opt.id}`}
             type="button"
             onClick={() => onChange(opt.id)}
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-medium tracking-wide transition-all duration-200 cursor-pointer ${
+            className={`flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg text-xs font-medium tracking-wide transition-all duration-200 cursor-pointer ${
               isActive
                 ? 'bg-sky-primary text-white shadow-sm font-semibold'
                 : 'text-fi-muted hover:text-fi-text hover:bg-fi-panel/60 border border-transparent'
             }`}
           >
             <span className={isActive ? 'text-white' : 'opacity-80'}>{opt.icon}</span>
-            <span>{opt.label}</span>
+            <span className="text-[11px] sm:text-xs">{opt.label}</span>
             <span
-              className={`text-[10px] px-1.5 py-0.5 rounded-md transition-colors ${
+              className={`text-[9px] sm:text-[10px] px-1 py-0.2 rounded transition-colors ${
                 isActive
                   ? 'bg-black/20 text-white font-semibold'
                   : 'bg-fi-panel text-fi-muted border border-fi-border/50'

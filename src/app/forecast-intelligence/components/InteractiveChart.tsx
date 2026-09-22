@@ -140,8 +140,8 @@ export function InteractiveChart({
   };
 
   return (
-    <div className="w-full bg-fi-surface border border-fi-border rounded-2xl p-4 md:p-6 shadow-xl">
-      <div className="h-100 md:h-115 w-full">
+    <div className="w-full bg-fi-surface border border-fi-border rounded-xl p-3.5 sm:p-4.5 lg:p-5 shadow-lg">
+      <div className="h-75 sm:h-88 md:h-100 w-full">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={chartData} margin={{ top: 15, right: 20, left: -10, bottom: 5 }}>
             <defs>
@@ -289,7 +289,7 @@ export function InteractiveChart({
       </div>
 
       {/* Bottom Chart Legend Pill Bar */}
-      <div className="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs border-t border-slate-800/80 pt-3">
+      <div className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-xs border-t border-fi-border/60 pt-2.5">
         {activeModels.has('consensus') && (
           <div className="flex items-center gap-1.5 text-slate-200">
             <span className="w-4 h-0.5 border-t-2 border-dashed border-white inline-block" />

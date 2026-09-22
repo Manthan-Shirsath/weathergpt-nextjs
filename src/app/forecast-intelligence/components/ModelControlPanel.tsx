@@ -134,19 +134,19 @@ export function ModelControlPanel({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-3.5">
       {/* Top row: Presets + View Mode Toggles */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-4 bg-fi-surface border border-fi-border rounded-2xl">
+      <div className="flex flex-wrap items-center justify-between gap-2.5 p-3 sm:p-3.5 bg-fi-surface border border-fi-border rounded-xl">
         {/* Presets */}
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-semibold text-fi-muted uppercase tracking-wider mr-1 flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-blue-400" /> Presets:
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+          <span className="text-[11px] font-semibold text-fi-muted uppercase tracking-wider mr-1 flex items-center gap-1">
+            <Sparkles className="w-3 h-3 text-blue-400" /> Presets:
           </span>
           <button
             onClick={() => onSelectPreset('all')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
+            className={`px-2.5 py-1 rounded-lg text-xs font-medium transition cursor-pointer ${
               activePreset === 'all'
-                ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/30'
+                ? 'bg-blue-600 text-white shadow-xs shadow-blue-500/30'
                 : 'bg-fi-panel text-fi-muted hover:bg-fi-surface hover:text-fi-text border border-fi-border'
             }`}
           >
@@ -154,9 +154,9 @@ export function ModelControlPanel({
           </button>
           <button
             onClick={() => onSelectPreset('physics')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
+            className={`px-2.5 py-1 rounded-lg text-xs font-medium transition cursor-pointer ${
               activePreset === 'physics'
-                ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/30'
+                ? 'bg-blue-600 text-white shadow-xs shadow-blue-500/30'
                 : 'bg-fi-panel text-fi-muted hover:bg-fi-surface hover:text-fi-text border border-fi-border'
             }`}
           >
@@ -164,9 +164,9 @@ export function ModelControlPanel({
           </button>
           <button
             onClick={() => onSelectPreset('ai')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
+            className={`px-2.5 py-1 rounded-lg text-xs font-medium transition cursor-pointer ${
               activePreset === 'ai'
-                ? 'bg-purple-600 text-white shadow-sm shadow-purple-500/30'
+                ? 'bg-purple-600 text-white shadow-xs shadow-purple-500/30'
                 : 'bg-fi-panel text-fi-muted hover:bg-fi-surface hover:text-fi-text border border-fi-border'
             }`}
           >
@@ -174,19 +174,19 @@ export function ModelControlPanel({
           </button>
           <button
             onClick={() => onSelectPreset('ecmwf_duo')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
+            className={`px-2.5 py-1 rounded-lg text-xs font-medium transition cursor-pointer ${
               activePreset === 'ecmwf_duo'
-                ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-500/30'
+                ? 'bg-indigo-600 text-white shadow-xs shadow-indigo-500/30'
                 : 'bg-fi-panel text-fi-muted hover:bg-fi-surface hover:text-fi-text border border-fi-border'
             }`}
           >
-            ECMWF Duo (Physics vs ML)
+            ECMWF Duo
           </button>
         </div>
 
         {/* View toggles */}
-        <div className="flex items-center gap-3">
-          <label className="flex items-center gap-2 text-xs text-fi-muted cursor-pointer select-none">
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          <label className="flex items-center gap-1.5 text-xs text-fi-muted cursor-pointer select-none">
             <input
               type="checkbox"
               checked={showLines}
@@ -196,7 +196,7 @@ export function ModelControlPanel({
             <span>Lines</span>
           </label>
 
-          <label className="flex items-center gap-2 text-xs text-fi-muted cursor-pointer select-none">
+          <label className="flex items-center gap-1.5 text-xs text-fi-muted cursor-pointer select-none">
             <input
               type="checkbox"
               checked={showSpreadBand}
@@ -209,7 +209,7 @@ export function ModelControlPanel({
             </span>
           </label>
 
-          <label className="flex items-center gap-2 text-xs text-fi-muted cursor-pointer select-none">
+          <label className="flex items-center gap-1.5 text-xs text-fi-muted cursor-pointer select-none">
             <input
               type="checkbox"
               checked={showDivergenceShading}
@@ -217,7 +217,7 @@ export function ModelControlPanel({
               className="rounded border-fi-border bg-fi-panel text-red-500 focus:ring-0 focus:ring-offset-0 cursor-pointer w-3.5 h-3.5"
             />
             <span className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-red-400/80 animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-red-400/80 animate-pulse" />
               Divergence Shading
             </span>
           </label>
@@ -225,7 +225,7 @@ export function ModelControlPanel({
       </div>
 
       {/* Model Selection Pills with Focus Buttons */}
-      <div className="flex flex-wrap items-center gap-2.5 p-3.5 bg-fi-surface border border-fi-border rounded-2xl">
+      <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 p-2.5 sm:p-3 bg-fi-surface border border-fi-border rounded-xl">
         {MODEL_CONFIGS.map(model => {
           const isSelected = activeModels.has(model.id);
           const isOnlyOne = activeModels.size === 1 && isSelected;
@@ -234,15 +234,15 @@ export function ModelControlPanel({
             <div
               key={model.id}
               onClick={() => onToggleModel(model.id)}
-              className={`group flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-medium transition cursor-pointer select-none ${
+              className={`group flex items-center gap-1.5 px-2.5 py-1 sm:py-1.5 rounded-lg border text-xs font-medium transition cursor-pointer select-none ${
                 isSelected
-                  ? 'bg-fi-panel border-fi-border text-fi-text shadow-sm'
+                  ? 'bg-fi-panel border-fi-border text-fi-text shadow-2xs'
                   : 'bg-fi-surface/60 border-fi-border/60 text-fi-muted hover:border-fi-border hover:text-fi-text'
               }`}
             >
               {/* Checkbox circle with model color */}
               <div
-                className={`w-3.5 h-3.5 rounded-full flex items-center justify-center transition-all ${
+                className={`w-3 h-3 rounded-full flex items-center justify-center transition-all ${
                   isSelected ? 'scale-100' : 'opacity-40'
                 }`}
                 style={{
@@ -252,21 +252,21 @@ export function ModelControlPanel({
               >
                 {isSelected && (
                   model.id === 'consensus' ? (
-                    <div className="w-1.5 h-1.5 rounded-full bg-fi-surface" />
+                    <div className="w-1 h-1 rounded-full bg-fi-surface" />
                   ) : (
-                    <Check className="w-2.5 h-2.5 text-fi-surface stroke-3" />
+                    <Check className="w-2 h-2 text-fi-surface stroke-3" />
                   )
                 )}
               </div>
 
-              <span className="tracking-tight">{model.name}</span>
+              <span className="tracking-tight text-[11px] sm:text-xs">{model.name}</span>
 
               {/* Focus button */}
               <button
                 type="button"
                 onClick={(e) => handleFocusModel(model.id, e)}
                 title={isOnlyOne ? "Restore all models" : `Focus only on ${model.name}`}
-                className={`ml-1 px-1.5 py-0.5 rounded text-[10px] tracking-wide uppercase transition cursor-pointer ${
+                className={`ml-0.5 px-1 py-0.2 rounded text-[9px] tracking-wide uppercase transition cursor-pointer ${
                   isOnlyOne
                     ? 'bg-blue-500/30 text-blue-400 border border-blue-400/40'
                     : 'text-fi-muted hover:text-fi-text hover:bg-fi-panel'
@@ -281,45 +281,45 @@ export function ModelControlPanel({
       </div>
 
       {/* Daily Agreement & Overall Disagreement Metric Ribbon */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 items-stretch">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-2.5 sm:gap-3 items-stretch">
         {/* Left Metric Card: Max Overall Disagreement */}
-        <div className="lg:col-span-3 p-4 bg-fi-surface border border-fi-border rounded-2xl flex flex-col justify-between">
-          <div className="text-[11px] font-semibold uppercase tracking-wider text-fi-muted flex items-center gap-1.5">
+        <div className="md:col-span-4 lg:col-span-3 p-3.5 bg-fi-surface border border-fi-border rounded-xl flex flex-col justify-between">
+          <div className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-fi-muted flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-amber-400" />
             Max Overall Disagreement
           </div>
-          <div className="my-2">
-            <div className="text-3xl font-bold tracking-tight text-amber-400">
+          <div className="my-1.5">
+            <div className="text-2xl sm:text-3xl font-bold tracking-tight text-amber-400">
               {getOverallSpreadValue()}
             </div>
-            <p className="text-[11px] text-fi-muted mt-0.5">
+            <p className="text-[10px] sm:text-[11px] text-fi-muted mt-0.5 leading-snug">
               Peak multi-model spread across 7-day forecast
             </p>
           </div>
           {selectedDayIndex !== null && (
             <button
               onClick={() => onSelectDay(null)}
-              className="mt-1 inline-flex items-center gap-1 text-[11px] font-medium text-blue-400 hover:text-blue-300 cursor-pointer self-start"
+              className="mt-1 inline-flex items-center gap-1 text-[10px] font-medium text-blue-400 hover:text-blue-300 cursor-pointer self-start"
             >
-              <Filter className="w-3 h-3" /> Showing Day {selectedDayIndex + 1} &bull; Reset to All Days
+              <Filter className="w-3 h-3" /> Showing Day {selectedDayIndex + 1} &bull; Reset
             </button>
           )}
         </div>
 
         {/* Right Metric Cards: 7-Day Agreement Strip */}
-        <div className="lg:col-span-9 p-4 bg-fi-surface border border-fi-border rounded-2xl flex flex-col justify-between">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-fi-muted">
+        <div className="md:col-span-8 lg:col-span-9 p-3.5 bg-fi-surface border border-fi-border rounded-xl flex flex-col justify-between">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-fi-muted">
               Daily Agreement (Click day to filter)
             </span>
             {selectedDayIndex !== null && (
-              <span className="text-[10px] bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded-full font-medium">
+              <span className="text-[9px] sm:text-[10px] bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2 py-0.2 rounded-full font-medium">
                 Filtered: {dailyAgreements[selectedDayIndex]?.formattedDate || `Day ${selectedDayIndex + 1}`}
               </span>
             )}
           </div>
 
-          <div className="grid grid-cols-7 gap-2">
+          <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
             {dailyAgreements.map((day) => {
               const isFiltered = selectedDayIndex === day.dayIndex;
               const isToday = day.dayIndex === 0;
@@ -350,24 +350,24 @@ export function ModelControlPanel({
                 <button
                   key={day.dayIndex}
                   onClick={() => onSelectDay(isFiltered ? null : day.dayIndex)}
-                  className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center justify-between ${
+                  className={`p-1.5 sm:p-2 rounded-lg border text-center transition-all cursor-pointer flex flex-col items-center justify-between ${
                     isFiltered
-                      ? 'bg-blue-600/20 border-blue-500/60 ring-1 ring-blue-500/40 shadow-md'
+                      ? 'bg-blue-600/20 border-blue-500/60 ring-1 ring-blue-500/40 shadow-xs'
                       : 'bg-fi-panel border-fi-border hover:bg-fi-surface hover:border-sky-primary/30'
                   }`}
                 >
-                  <div className="text-[11px] font-semibold text-fi-muted">
+                  <div className="text-[10px] sm:text-[11px] font-semibold text-fi-muted truncate w-full">
                     {isToday ? 'Today' : day.dayOfWeek}
                   </div>
 
-                  <div className="my-1 flex items-center gap-1">
-                    <span className={`w-2 h-2 rounded-full shadow-sm ${dotColor}`} />
-                    <span className={`text-[10px] font-bold ${ratingTextColor}`}>
+                  <div className="my-0.5 flex items-center gap-1">
+                    <span className={`w-1.5 h-1.5 rounded-full shadow-xs ${dotColor}`} />
+                    <span className={`text-[9px] sm:text-[10px] font-bold ${ratingTextColor}`}>
                       {day.rating === 'HIGH' ? 'High' : day.rating === 'MODERATE' ? 'Mod' : 'Low'}
                     </span>
                   </div>
 
-                  <div className="text-[10px] text-fi-muted font-mono">
+                  <div className="text-[9px] sm:text-[10px] text-fi-muted font-mono">
                     &Delta; {spreadVal}
                   </div>
                 </button>

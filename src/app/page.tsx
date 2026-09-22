@@ -114,7 +114,7 @@ export default async function DashboardPage({
       )}
 
       {/* Main content */}
-      <div className="w-full max-w-350 mx-auto px-4 sm:px-6 lg:px-8 py-4 space-y-6 pb-24">
+      <div className="w-full max-w-350 mx-auto px-3.5 sm:px-5 lg:px-6 py-3.5 space-y-4 sm:space-y-5 pb-20">
         <CurrentWeatherCard data={data} />
         
         <WeatherMetrics data={data} />

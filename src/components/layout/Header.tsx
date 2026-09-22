@@ -10,7 +10,7 @@ import { LanguageSelector } from './LanguageSelector';
 
 export function Header() {
   return (
-    <header className="h-20 bg-sky-surface/80 backdrop-blur-2xl border-b border-sky-border flex items-center justify-between px-4 lg:px-10 z-10 shrink-0 sticky top-0 transition-colors duration-300">
+    <header className="h-16 xl:h-18 bg-sky-surface/80 backdrop-blur-2xl border-b border-sky-border flex items-center justify-between px-4 lg:px-6 xl:px-8 z-10 shrink-0 sticky top-0 transition-colors duration-300">
       {/* Mobile logo */}
       <div className="flex items-center lg:hidden">
         <div className="bg-linear-to-tr from-sky-primary to-sky-ai p-1.5 rounded-lg shadow-sm mr-2">
@@ -20,7 +20,7 @@ export function Header() {
       </div>
 
       {/* Desktop search bar */}
-      <div className="hidden lg:flex flex-1 items-center gap-6 max-w-md">
+      <div className="hidden lg:flex flex-1 items-center gap-4 max-w-md">
         <LocationSearch placeholder="Search locations..." className="w-full" />
       </div>
 

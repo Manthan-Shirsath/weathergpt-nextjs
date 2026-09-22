@@ -128,14 +128,14 @@ export function AiSynthesisBanner({
       : 'bg-rose-400';
 
   return (
-    <div className="p-4 bg-fi-surface border border-fi-border rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm">
-      <div className="space-y-1.5 max-w-3xl">
+    <div className="p-3 sm:p-3.5 bg-fi-surface border border-fi-border rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-xs">
+      <div className="space-y-1 max-w-3xl">
         <div className="flex items-center gap-2">
-          <span className="flex items-center gap-1 text-xs font-semibold text-blue-400 uppercase tracking-wider">
+          <span className="flex items-center gap-1 text-[11px] sm:text-xs font-semibold text-blue-400 uppercase tracking-wider">
             <Bot className="w-3.5 h-3.5 text-blue-400" />
             WeatherGPT AI Analysis:
           </span>
-          <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase border ${badgeBg}`}>
+          <span className={`inline-flex items-center gap-1.5 px-2 py-0.2 rounded-full text-[9px] sm:text-[10px] font-bold tracking-wide uppercase border ${badgeBg}`}>
             <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${beaconColor}`} />
             {spreadLevel}
           </span>
@@ -148,7 +148,7 @@ export function AiSynthesisBanner({
       <div className="flex items-center gap-2 self-end md:self-center shrink-0">
         <button
           onClick={handleExportCsv}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-fi-panel hover:bg-fi-surface text-fi-text border border-fi-border transition cursor-pointer"
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-fi-panel hover:bg-fi-surface text-fi-text border border-fi-border transition cursor-pointer"
         >
           <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400" />
           <span>Export CSV</span>
@@ -156,7 +156,7 @@ export function AiSynthesisBanner({
 
         <button
           onClick={handleExportPng}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-fi-panel hover:bg-fi-surface text-fi-text border border-fi-border transition cursor-pointer"
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-fi-panel hover:bg-fi-surface text-fi-text border border-fi-border transition cursor-pointer"
         >
           {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Download className="w-3.5 h-3.5 text-blue-400" />}
           <span>{copied ? 'Exported PNG' : 'Export PNG'}</span>

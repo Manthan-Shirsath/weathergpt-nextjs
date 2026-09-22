@@ -55,23 +55,25 @@ export function ForecastIntelligenceClient({ initialData }: ForecastIntelligence
   const currentAnalysisText = initialData.aiAnalysisText[activeVariable];
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
+    <div className="p-3.5 sm:p-5 lg:p-6 max-w-7xl mx-auto space-y-3.5 sm:space-y-4 lg:space-y-5">
       {/* Top Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2 mb-0.5">
             <span className="p-1 rounded-lg bg-blue-500/20 text-blue-400 border border-blue-500/30">
-              <Sparkles className="w-4 h-4" />
+              <Sparkles className="w-3.5 h-3.5" />
             </span>
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-fi-text">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-fi-text">
               Forecast Intelligence
             </h1>
           </div>
-          <div className="flex items-center gap-2 text-sm text-fi-muted">
-            <MapPin className="w-3.5 h-3.5 text-blue-400" />
-            <span className="font-medium text-fi-text">{initialData.locationName}</span>
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-fi-muted">
+            <div className="flex items-center gap-1 text-fi-text font-medium">
+              <MapPin className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+              <span>{initialData.locationName}</span>
+            </div>
             <span>&bull;</span>
-            <span>Multi-Model Consensus &amp; Divergence Analysis (7 Days)</span>
+            <span className="truncate">Multi-Model Consensus &amp; Divergence Analysis (7 Days)</span>
           </div>
         </div>
 

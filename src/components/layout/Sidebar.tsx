@@ -88,18 +88,18 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="hidden lg:flex w-72 flex-col bg-sky-surface/60 backdrop-blur-2xl border-r border-sky-border z-20 transition-all duration-300">
-      <div className="flex h-20 items-center px-8">
-        <div className="bg-linear-to-tr from-sky-primary to-sky-ai p-2 rounded-xl shadow-md mr-3">
-          <Sparkles className="h-5 w-5 text-white" />
+    <aside className="hidden lg:flex w-60 xl:w-64 2xl:w-72 flex-col bg-sky-surface/60 backdrop-blur-2xl border-r border-sky-border z-20 transition-all duration-300">
+      <div className="flex h-16 xl:h-18 items-center px-5 xl:px-6">
+        <div className="bg-linear-to-tr from-sky-primary to-sky-ai p-1.5 xl:p-2 rounded-xl shadow-md mr-2.5 xl:mr-3">
+          <Sparkles className="h-4 w-4 xl:h-5 xl:w-5 text-white" />
         </div>
         <div>
-          <span className="text-xl font-bold tracking-tight text-sky-text-primary">WeatherGPT</span>
-          <span className="block text-[10px] text-sky-ai font-bold tracking-[0.2em] uppercase -mt-1">Agentic Intelligence</span>
+          <span className="text-lg xl:text-xl font-bold tracking-tight text-sky-text-primary">WeatherGPT</span>
+          <span className="block text-[9px] xl:text-[10px] text-sky-ai font-bold tracking-[0.2em] uppercase -mt-0.5">Agentic Intelligence</span>
         </div>
       </div>
       
-      <nav className="space-y-1.5 px-3 flex-1 overflow-y-auto py-6">
+      <nav className="space-y-1 px-2.5 xl:px-3 flex-1 overflow-y-auto py-3 xl:py-4">
         {NAV_ITEMS_DATA.map((item) => {
           const isActive = pathname === item.path;
           const isNavigating = currentNavigating === item.path;
@@ -116,7 +116,7 @@ export function Sidebar() {
                 }
               }}
               className={cn(
-                "group relative flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 overflow-hidden",
+                "group relative flex items-center justify-between px-3 py-2 xl:px-3.5 xl:py-2.5 rounded-xl text-xs xl:text-sm font-medium transition-all duration-300 overflow-hidden",
                 isActive 
                   ? "text-sky-primary shadow-[0_4px_12px_rgba(0,0,0,0.05)] dark:shadow-[0_4px_12px_rgba(0,0,0,0.2)]" 
                   : "text-sky-text-secondary hover:text-sky-text-primary hover:bg-sky-surface-elevated/40"
@@ -131,10 +131,10 @@ export function Sidebar() {
               
               <div className="flex items-center">
                 {isNavigating ? (
-                  <div className="h-4 w-4 mr-3 rounded-full border-2 border-sky-primary border-t-transparent animate-spin" />
+                  <div className="h-3.5 w-3.5 mr-2.5 rounded-full border-2 border-sky-primary border-t-transparent animate-spin" />
                 ) : (
                   <Icon className={cn(
-                    "h-4 w-4 mr-3 transition-transform duration-300", 
+                    "h-4 w-4 mr-2.5 xl:mr-3 transition-transform duration-300", 
                     isActive ? "text-sky-primary scale-110" : "text-sky-text-secondary group-hover:text-sky-text-primary group-hover:scale-110"
                   )} />
                 )}
@@ -144,13 +144,13 @@ export function Sidebar() {
               <div className="flex items-center gap-1.5">
                 {item.badge && (
                   <span className={cn(
-                    "px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-xs",
+                    "px-1.5 py-0.5 rounded-full text-[9px] xl:text-[10px] font-bold uppercase tracking-wider shadow-xs",
                     item.badge === 'AI' ? "bg-sky-ai/10 text-sky-ai" : "bg-sky-primary/10 text-sky-primary"
                   )}>
                     {item.badge}
                   </span>
                 )}
-                <kbd className="hidden group-hover:inline-block px-1.5 py-0.5 rounded text-[10px] font-mono text-sky-text-secondary bg-sky-surface-elevated border border-sky-border shadow-2xs">
+                <kbd className="hidden group-hover:inline-block px-1 py-0.2 rounded text-[9px] xl:text-[10px] font-mono text-sky-text-secondary bg-sky-surface-elevated border border-sky-border shadow-2xs">
                   {item.shortcut}
                 </kbd>
               </div>
@@ -159,11 +159,11 @@ export function Sidebar() {
         })}
       </nav>
 
-      <div className="p-6">
-         <button onClick={toggleTheme} className="flex w-full items-center justify-between px-4 py-3 text-sm text-sky-text-secondary hover:text-sky-text-primary rounded-xl hover:bg-sky-surface-elevated/60 transition-all duration-300 group border border-transparent hover:border-sky-border cursor-pointer">
+      <div className="p-3 xl:p-4">
+         <button onClick={toggleTheme} className="flex w-full items-center justify-between px-3 py-2 xl:px-3.5 xl:py-2.5 text-xs xl:text-sm text-sky-text-secondary hover:text-sky-text-primary rounded-xl hover:bg-sky-surface-elevated/60 transition-all duration-300 group border border-transparent hover:border-sky-border cursor-pointer">
             <span className="font-semibold tracking-wide">Toggle Theme</span>
-            <div className="bg-sky-surface-elevated p-1.5 rounded-lg group-hover:shadow-xs transition-all">
-              {isDark ? <Sun className="h-4 w-4 text-amber-500" /> : <Moon className="h-4 w-4 text-sky-primary" />}
+            <div className="bg-sky-surface-elevated p-1 xl:p-1.5 rounded-lg group-hover:shadow-xs transition-all">
+              {isDark ? <Sun className="h-3.5 w-3.5 xl:h-4 xl:w-4 text-amber-500" /> : <Moon className="h-3.5 w-3.5 xl:h-4 xl:w-4 text-sky-primary" />}
             </div>
          </button>
       </div>
