@@ -45,3 +45,5 @@ migrate_output.txt
 
 # supabase local temp
 supabase/.temp/
+
+.vercel
