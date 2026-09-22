@@ -13,8 +13,8 @@ import { cookies } from 'next/headers';
 import { parseLocationCookie } from '@/lib/location/store';
 
 export const metadata: Metadata = {
-  title: "SkyCast — Weather Intelligence",
-  description: "AI-powered weather dashboard with real-time forecasts, alerts, and agricultural intelligence for any location.",
+  title: "WeatherGPT — Agentic Weather Intelligence",
+  description: "AI-powered weather dashboard with real-time forecasts, alerts, and specialized agent intelligence for any location.",
 };
 
 export default async function DashboardPage({

@@ -347,7 +347,7 @@ export function ChatWindow() {
             <div className="w-full max-w-4xl mt-8">
               <h3 className="text-sm font-semibold text-sky-text-secondary uppercase tracking-wider mb-4 flex items-center gap-2">
                 <Activity className="h-4 w-4" />
-                Ask a SkyCast Expert
+                Ask a WeatherGPT Expert
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {SCENARIOS.filter(s => domainOverride ? s.domain === domainOverride : true).slice(0, 6).map((scenario) => (

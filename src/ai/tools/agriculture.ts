@@ -4,7 +4,7 @@ import { weatherService } from '@/lib/weather/service';
 type AgricultureArgs = { location: string; crop?: string };
 
 export const getAgricultureAdviceTool = tool({
-  description: 'Evaluates agricultural conditions for a location based on current weather data. NOTE: This is currently a temporary rule-based heuristic approximation. The full SkyCast Agriculture Intelligence service is deferred to a future phase.',
+  description: 'Evaluates agricultural conditions for a location based on current weather data. NOTE: This is currently a temporary rule-based heuristic approximation. The full WeatherGPT Agriculture Intelligence service is deferred to a future phase.',
   inputSchema: jsonSchema<AgricultureArgs>({
     type: 'object',
     properties: {
@@ -45,7 +45,7 @@ export const getAgricultureAdviceTool = tool({
           }
         },
         architecture_status: "UNAVAILABLE_DEFERRED",
-        disclaimer: "These are basic threshold-based estimates. The full SkyCast Agriculture Intelligence integration has not yet been migrated and is unavailable."
+        disclaimer: "These are basic threshold-based estimates. The full WeatherGPT Agriculture Intelligence integration has not yet been migrated and is unavailable."
       };
     } catch (error) {
       return {

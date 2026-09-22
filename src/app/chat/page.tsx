@@ -1,7 +1,7 @@
 import { ChatWindow } from "@/components/chat/ChatWindow";
 
 export const metadata = {
-  title: "WeatherGPT | SkyCast",
+  title: "AI Agents Hub | WeatherGPT",
 };
 
 export default function ChatPage() {

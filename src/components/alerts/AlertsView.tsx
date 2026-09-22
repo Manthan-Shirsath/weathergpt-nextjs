@@ -230,7 +230,7 @@ export function AlertsView({ data, officialAlerts, city, error }: AlertsViewProp
       <div className="mb-6 p-4 bg-sky-surface-elevated border border-sky-border rounded-2xl flex items-start gap-3">
         <Info className="h-5 w-5 text-sky-primary shrink-0 mt-0.5" />
         <div>
-          <p className="text-sm font-bold text-sky-text-primary mb-1">SkyCast Computed Risks (Heuristic)</p>
+          <p className="text-sm font-bold text-sky-text-primary mb-1">WeatherGPT Computed Risks (Heuristic)</p>
           <p className="text-xs text-sky-text-secondary leading-relaxed">
             The risk assessments below are heuristic approximations derived from current and hourly weather thresholds
             (temperature ≥40°C → heatwave, precipitation ≥70% → flood risk, wind ≥60 km/h → high wind, etc.).
@@ -294,7 +294,7 @@ export function AlertsView({ data, officialAlerts, city, error }: AlertsViewProp
 
       <h2 className="text-xl font-bold text-sky-text-primary mb-4 flex items-center gap-2">
         <Thermometer className="h-6 w-6 text-amber-500" />
-        SkyCast Computed Risks
+        WeatherGPT Computed Risks
       </h2>
 
       {/* Risk cards */}

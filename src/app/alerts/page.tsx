@@ -8,8 +8,8 @@ import { cookies } from 'next/headers';
 import { parseLocationCookie } from '@/lib/location/store';
 
 export const metadata: Metadata = {
-  title: 'Weather Risk | SkyCast',
-  description: 'Threshold-based weather risk estimates for your location. Full IMD alert integration is planned for a future phase.',
+  title: 'Weather Risk & Alerts | WeatherGPT',
+  description: 'Threshold-based weather risk estimates and official active alerts for your location.',
 };
 
 export default async function AlertsPage({

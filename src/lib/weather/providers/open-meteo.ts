@@ -79,7 +79,7 @@ export class OpenMeteoProvider implements BaseWeatherProvider {
     const nominatimUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cityName)}&format=json&limit=1`;
     try {
       const res = await fetch(nominatimUrl, {
-        headers: { "User-Agent": "SkyCastWeatherApp/1.0" },
+        headers: { "User-Agent": "WeatherGPTApp/1.0" },
         cache: "no-store",
       });
       if (!res.ok) throw new Error("Nominatim fetch failed");

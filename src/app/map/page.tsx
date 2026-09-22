@@ -3,7 +3,7 @@ import { WeatherMapClient } from '@/components/map/WeatherMapClient';
 import { Layers, CloudRain, Wind, Info } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Weather Map | SkyCast',
+  title: 'Weather Map | WeatherGPT',
   description:
     'Interactive weather map with geographic positioning. Radar overlays require real-time data pipeline migration.',
 };

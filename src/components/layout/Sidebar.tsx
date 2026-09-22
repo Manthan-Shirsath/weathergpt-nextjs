@@ -94,8 +94,8 @@ export function Sidebar() {
           <Sparkles className="h-5 w-5 text-white" />
         </div>
         <div>
-          <span className="text-xl font-bold tracking-tight text-sky-text-primary">SkyCast</span>
-          <span className="block text-[10px] text-sky-ai font-bold tracking-[0.2em] uppercase -mt-1">Intelligence</span>
+          <span className="text-xl font-bold tracking-tight text-sky-text-primary">WeatherGPT</span>
+          <span className="block text-[10px] text-sky-ai font-bold tracking-[0.2em] uppercase -mt-1">Agentic Intelligence</span>
         </div>
       </div>
       

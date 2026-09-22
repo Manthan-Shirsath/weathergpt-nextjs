@@ -6,8 +6,8 @@ import { Header } from "@/components/layout/Header";
 import { MobileNav } from "@/components/layout/MobileNav";
 
 export const metadata: Metadata = {
-  title: "SkyCast",
-  description: "Next Generation Weather Intelligence",
+  title: "WeatherGPT — Agentic Weather Intelligence",
+  description: "Next Generation Agentic Weather Intelligence",
 };
 
 export default function RootLayout({

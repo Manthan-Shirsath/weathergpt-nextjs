@@ -27,7 +27,7 @@ export const getOfficialAlertsTool = tool({
 });
 
 export const getWeatherRiskTool = tool({
-  description: 'Evaluates weather risks (e.g. heavy rain, extreme heat, high winds) based on SkyCast threshold analysis. This provides a computed risk estimate, not an official government warning. Use this if official alerts are unavailable or to augment official warnings with local computed estimates.',
+  description: 'Evaluates weather risks (e.g. heavy rain, extreme heat, high winds) based on WeatherGPT threshold analysis. This provides a computed risk estimate, not an official government warning. Use this if official alerts are unavailable or to augment official warnings with local computed estimates.',
   inputSchema: jsonSchema<AlertsArgs>({
     type: 'object',
     properties: {

@@ -65,7 +65,7 @@ export function AiSynthesisBanner({
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `skycast_forecast_intelligence_${locationName}_${activeVariable}.csv`);
+    link.setAttribute('download', `weathergpt_forecast_intelligence_${locationName}_${activeVariable}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -104,7 +104,7 @@ export function AiSynthesisBanner({
         const pngUrl = canvas.toDataURL('image/png');
         const downloadLink = document.createElement('a');
         downloadLink.href = pngUrl;
-        downloadLink.download = `skycast_${locationName}_${activeVariable}_chart.png`;
+        downloadLink.download = `weathergpt_${locationName}_${activeVariable}_chart.png`;
         document.body.appendChild(downloadLink);
         downloadLink.click();
         document.body.removeChild(downloadLink);
@@ -133,7 +133,7 @@ export function AiSynthesisBanner({
         <div className="flex items-center gap-2">
           <span className="flex items-center gap-1 text-xs font-semibold text-blue-400 uppercase tracking-wider">
             <Bot className="w-3.5 h-3.5 text-blue-400" />
-            SkyCast AI Analysis:
+            WeatherGPT AI Analysis:
           </span>
           <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase border ${badgeBg}`}>
             <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${beaconColor}`} />

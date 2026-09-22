@@ -16,7 +16,7 @@ export function Header() {
         <div className="bg-linear-to-tr from-sky-primary to-sky-ai p-1.5 rounded-lg shadow-sm mr-2">
           <Sparkles className="h-4 w-4 text-white" />
         </div>
-        <span className="text-lg font-bold tracking-tight text-sky-text-primary">SkyCast</span>
+        <span className="text-lg font-bold tracking-tight text-sky-text-primary">WeatherGPT</span>
       </div>
 
       {/* Desktop search bar */}
