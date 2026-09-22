@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# build outputs
+migrate_output.txt
+
+# supabase local temp
+supabase/.temp/

@@ -1,69 +1,142 @@
-import Image from "next/image";
+import type { Metadata } from 'next';
+import { weatherService } from "@/lib/weather/service";
+import { AlertService } from "@/lib/alerts/service";
+import { CurrentWeatherCard } from "@/components/weather/CurrentWeatherCard";
+import { WeatherMetrics } from "@/components/weather/WeatherMetrics";
+import { ForecastChart } from "@/components/weather/ForecastChart";
+import { DailyForecast } from "@/components/weather/DailyForecast";
+import { DashboardLocationBar } from "@/components/weather/DashboardLocationBar";
+import { AlertTriangle, CloudOff, Thermometer, ShieldAlert } from "lucide-react";
+import Link from 'next/link';
+import { cookies } from 'next/headers';
+import { parseLocationCookie } from '@/lib/location/store';
 
-export default function Home() {
+export const metadata: Metadata = {
+  title: "SkyCast — Weather Intelligence",
+  description: "AI-powered weather dashboard with real-time forecasts, alerts, and agricultural intelligence for any location.",
+};
+
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
+  const params = await searchParams;
+  const cookieStore = await cookies();
+  const savedLocation = parseLocationCookie(cookieStore.get('skycast_location')?.value);
+
+  const city = typeof params.city === 'string' && params.city.trim() !== ''
+    ? params.city.trim()
+    : (savedLocation?.name || 'Pune');
+  
+  let data;
+  let officialAlerts;
+  let error;
+  
+  try {
+    const paramCityStr = typeof params.city === 'string' ? params.city : undefined;
+    const isSavedCity = savedLocation && (!paramCityStr || paramCityStr.toLowerCase() === savedLocation.name.toLowerCase());
+    const weatherPromise = isSavedCity && savedLocation.lat && savedLocation.lon
+      ? weatherService.getWeather(savedLocation.lat, savedLocation.lon, false, { name: savedLocation.name })
+      : weatherService.getWeatherForCity(city);
+
+    const [weatherData, alertsData] = await Promise.all([
+      weatherPromise,
+      AlertService.getActiveAlerts(city).catch(() => null)
+    ]);
+    data = weatherData;
+    officialAlerts = alertsData;
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      error = e.message;
+    } else {
+      error = "Failed to load weather data";
+    }
+  }
+
+  if (error || !data) {
+    return (
+      <div className="flex flex-col h-full w-full">
+        <DashboardLocationBar currentCity={city} />
+        <div className="flex-1 flex items-center justify-center p-8">
+          <div className="flex flex-col items-center justify-center space-y-4 p-8 bg-sky-surface border border-sky-border rounded-2xl shadow-sm text-center max-w-md">
+            <CloudOff className="h-12 w-12 text-sky-text-secondary opacity-50" />
+            <p className="text-sky-danger text-lg font-semibold">Weather data unavailable</p>
+            <p className="text-sky-text-secondary text-sm">
+              {error}. We couldn&apos;t retrieve the latest data for <strong>{city}</strong>. 
+              Please check your connection or try a different location.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="flex flex-col h-full w-full">
+      {/* Location bar + search */}
+      <DashboardLocationBar currentCity={data.location.display_location || data.location.city} />
+
+      {/* Stale data warning */}
+      {data.freshness.stale && (
+        <div className="mx-4 md:mx-6 mt-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 flex items-start gap-3">
+          <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-bold text-amber-500">Displaying Cached Data</p>
+            <p className="text-xs text-sky-text-secondary mt-0.5">
+              The live weather API is unreachable. Data was last fetched at{' '}
+              {new Date(data.freshness.fetched_at).toLocaleTimeString()} — it may be stale.
+            </p>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      )}
+
+      {/* Official Alert Warning Banner */}
+      {officialAlerts?.status === 'ready' && officialAlerts.alerts.length > 0 && (
+        <div className="mx-4 md:mx-6 mt-4 bg-red-500/10 border border-red-500/30 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:justify-between">
+          <div className="flex items-start gap-3">
+            <ShieldAlert className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-bold text-red-500">Active Official Weather Warnings</p>
+              <p className="text-xs text-sky-text-secondary mt-0.5">
+                {officialAlerts.alerts.length} official warning(s) issued for this location.
+              </p>
+            </div>
+          </div>
+          <Link 
+            href={`/alerts?city=${encodeURIComponent(city)}`}
+            className="text-xs font-bold px-4 py-2 bg-red-500/20 text-red-400 rounded-xl hover:bg-red-500/30 transition-colors shrink-0"
           >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            View Details
+          </Link>
         </div>
-      </main>
+      )}
+
+      {/* Main content */}
+      <div className="w-full max-w-350 mx-auto px-4 sm:px-6 lg:px-8 py-4 space-y-6 pb-24">
+        <CurrentWeatherCard data={data} />
+        
+        <WeatherMetrics data={data} />
+
+        {/* Today's temperature context */}
+        {data.daily && data.daily.length > 0 && (
+          <div className="flex items-center gap-3 p-4 bg-sky-surface border border-sky-border rounded-2xl">
+            <Thermometer className="h-5 w-5 text-orange-400 shrink-0" />
+            <span className="text-sm text-sky-text-secondary">
+              Today&apos;s range:{' '}
+              <strong className="text-sky-text-primary">
+                {Math.round(data.daily[0].low_c)}° – {Math.round(data.daily[0].high_c)}°C
+              </strong>
+              {' '}·{' '}
+              <span className="text-sky-text-secondary">Precipitation probability: {data.daily[0].rain_probability_pct}%</span>
+            </span>
+          </div>
+        )}
+        
+        <ForecastChart data={data} />
+        
+        <DailyForecast data={data} />
+      </div>
     </div>
   );
 }
