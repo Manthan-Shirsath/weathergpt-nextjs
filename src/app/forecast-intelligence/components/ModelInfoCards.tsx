@@ -83,11 +83,11 @@ export function ModelInfoCards() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-base font-semibold tracking-tight text-slate-100 flex items-center gap-2">
+        <h3 className="text-base font-semibold tracking-tight text-fi-text flex items-center gap-2">
           <Cpu className="w-4 h-4 text-blue-400" />
           Forecasting Model Specifications
         </h3>
-        <span className="text-xs text-slate-400">
+        <span className="text-xs text-fi-muted">
           5 Multi-Methodology Models &bull; Free Open-Meteo Integration
         </span>
       </div>
@@ -96,11 +96,11 @@ export function ModelInfoCards() {
         {MODEL_SPECS.map(spec => (
           <div
             key={spec.id}
-            className="p-4 bg-slate-900/60 border border-slate-800/80 rounded-2xl flex flex-col justify-between hover:border-slate-700/80 transition-all duration-200 backdrop-blur-md"
+            className="p-4 bg-fi-panel border border-fi-border rounded-2xl flex flex-col justify-between hover:border-sky-primary/40 transition-all duration-200"
           >
             <div>
               <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-1.5 font-bold text-sm text-slate-100">
+                <div className="flex items-center gap-1.5 font-bold text-sm text-fi-text">
                   {spec.icon}
                   <span>{spec.name}</span>
                 </div>
@@ -112,23 +112,23 @@ export function ModelInfoCards() {
                 </span>
               </div>
 
-              <p className="text-[11px] text-slate-300 leading-relaxed mb-3">
+              <p className="text-[11px] text-fi-muted leading-relaxed mb-3">
                 {spec.description}
               </p>
             </div>
 
-            <div className="border-t border-slate-800/80 pt-2.5 space-y-1.5 text-[10px]">
-              <div className="flex items-center justify-between text-slate-400">
+            <div className="border-t border-fi-border pt-2.5 space-y-1.5 text-[10px]">
+              <div className="flex items-center justify-between text-fi-muted">
                 <span>Provider:</span>
-                <span className="text-slate-200 font-medium truncate max-w-30">{spec.provider}</span>
+                <span className="text-fi-text font-medium truncate max-w-30">{spec.provider}</span>
               </div>
-              <div className="flex items-center justify-between text-slate-400">
+              <div className="flex items-center justify-between text-fi-muted">
                 <span>Resolution:</span>
-                <span className="text-slate-200 font-medium">{spec.resolution}</span>
+                <span className="text-fi-text font-medium">{spec.resolution}</span>
               </div>
-              <div className="flex items-center justify-between text-slate-400">
+              <div className="flex items-center justify-between text-fi-muted">
                 <span>Update:</span>
-                <span className="text-slate-200 font-medium">{spec.cycle}</span>
+                <span className="text-fi-text font-medium">{spec.cycle}</span>
               </div>
             </div>
           </div>

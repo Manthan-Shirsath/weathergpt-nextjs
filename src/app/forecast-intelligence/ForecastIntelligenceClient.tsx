@@ -63,13 +63,13 @@ export function ForecastIntelligenceClient({ initialData }: ForecastIntelligence
             <span className="p-1 rounded-lg bg-blue-500/20 text-blue-400 border border-blue-500/30">
               <Sparkles className="w-4 h-4" />
             </span>
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-100">
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-fi-text">
               Forecast Intelligence
             </h1>
           </div>
-          <div className="flex items-center gap-2 text-sm text-slate-400">
+          <div className="flex items-center gap-2 text-sm text-fi-muted">
             <MapPin className="w-3.5 h-3.5 text-blue-400" />
-            <span className="font-medium text-slate-200">{initialData.locationName}</span>
+            <span className="font-medium text-fi-text">{initialData.locationName}</span>
             <span>&bull;</span>
             <span>Multi-Model Consensus &amp; Divergence Analysis (7 Days)</span>
           </div>

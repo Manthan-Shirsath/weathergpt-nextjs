@@ -16,42 +16,47 @@ export function VariableSelector({ activeVariable, onChange }: VariableSelectorP
       id: 'temperature',
       label: 'TEMPERATURE',
       unit: '°C',
-      icon: <Thermometer className="w-4 h-4" />
+      icon: <Thermometer className="w-3.5 h-3.5" />
     },
     {
       id: 'precipitation',
       label: 'PRECIPITATION AMOUNT',
       unit: 'MM',
-      icon: <CloudRain className="w-4 h-4" />
+      icon: <CloudRain className="w-3.5 h-3.5" />
     },
     {
       id: 'windSpeed',
       label: 'WIND SPEED',
       unit: 'KM/H',
-      icon: <Wind className="w-4 h-4" />
+      icon: <Wind className="w-3.5 h-3.5" />
     }
   ];
 
   return (
-    <div className="flex flex-wrap items-center gap-2 p-1.5 bg-slate-900/80 border border-slate-800 rounded-2xl backdrop-blur-md">
-      {options.map(opt => {
+    <div className="flex flex-wrap items-center gap-1.5 p-1.5 rounded-2xl border backdrop-blur-md transition-colors duration-300 bg-fi-surface border-fi-border shadow-xs">
+      {options.map((opt) => {
         const isActive = activeVariable === opt.id;
         return (
           <button
             key={opt.id}
             id={`var-btn-${opt.id}`}
+            type="button"
             onClick={() => onChange(opt.id)}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-xs tracking-wider transition-all duration-200 cursor-pointer ${
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-medium tracking-wide transition-all duration-200 cursor-pointer ${
               isActive
-                ? 'bg-blue-600/90 text-white shadow-lg shadow-blue-500/25 border border-blue-400/40'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent'
+                ? 'bg-sky-primary text-white shadow-sm font-semibold'
+                : 'text-fi-muted hover:text-fi-text hover:bg-fi-panel/60 border border-transparent'
             }`}
           >
-            <span className={isActive ? 'text-white' : 'text-slate-400'}>{opt.icon}</span>
+            <span className={isActive ? 'text-white' : 'opacity-80'}>{opt.icon}</span>
             <span>{opt.label}</span>
-            <span className={`text-[10px] px-1.5 py-0.5 rounded-md ${
-              isActive ? 'bg-blue-700/80 text-blue-100 font-semibold' : 'bg-slate-800 text-slate-400'
-            }`}>
+            <span
+              className={`text-[10px] px-1.5 py-0.5 rounded-md transition-colors ${
+                isActive
+                  ? 'bg-black/20 text-white font-semibold'
+                  : 'bg-fi-panel text-fi-muted border border-fi-border/50'
+              }`}
+            >
               ({opt.unit})
             </span>
           </button>

@@ -54,6 +54,31 @@ export function CurrentWeatherCard({ data, onOpenWeatherGPT }: CurrentWeatherCar
     return `https://openweathermap.org/img/wn/${mapped}@2x.png`;
   };
 
+  const sunProgress = useMemo(() => {
+    if (!sun?.sunrise || !sun?.sunset) return null;
+    try {
+      const sunriseTime = new Date(sun.sunrise).getTime();
+      const sunsetTime = new Date(sun.sunset).getTime();
+      const now = new Date().getTime();
+      if (isNaN(sunriseTime) || isNaN(sunsetTime) || sunsetTime <= sunriseTime) return null;
+      const pct = Math.min(100, Math.max(0, ((now - sunriseTime) / (sunsetTime - sunriseTime)) * 100));
+      
+      const formatTime = (iso: string) => {
+        const d = new Date(iso);
+        return isNaN(d.getTime()) ? '' : new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).format(d);
+      };
+
+      return {
+        pct,
+        sunriseStr: formatTime(sun.sunrise),
+        sunsetStr: formatTime(sun.sunset),
+        isDay: now >= sunriseTime && now <= sunsetTime,
+      };
+    } catch {
+      return null;
+    }
+  }, [sun]);
+
   return (
     <section className="relative w-full h-130 rounded-[2.5rem] overflow-hidden shadow-lg border-0 isolate group transition-all duration-700">
       <WeatherBackground condition={current.condition} timeOfDay={timeOfDay} />
@@ -75,6 +100,26 @@ export function CurrentWeatherCard({ data, onOpenWeatherGPT }: CurrentWeatherCar
           <p className="text-white/70 font-medium tracking-wide drop-shadow-md text-sm ml-2">
             {currentDate} &bull; {localTime}
           </p>
+
+          {sunProgress && (
+            <div className="inline-flex flex-col gap-1 bg-black/25 backdrop-blur-md border border-white/10 px-4 py-2 rounded-2xl w-max min-w-60 max-w-xs shadow-sm mt-1">
+              <div className="flex items-center justify-between text-[11px] font-medium text-white/85 gap-3">
+                <span>🌅 {sunProgress.sunriseStr}</span>
+                <span className="text-[10px] text-amber-300 font-semibold uppercase tracking-wider">{sunProgress.isDay ? 'Daylight' : 'Night'}</span>
+                <span>🌇 {sunProgress.sunsetStr}</span>
+              </div>
+              <div className="relative w-full h-1.5 bg-white/20 rounded-full overflow-visible my-1">
+                <div 
+                  className="h-full bg-linear-to-r from-amber-400 via-orange-300 to-rose-400 rounded-full" 
+                  style={{ width: `${sunProgress.pct}%` }} 
+                />
+                <div 
+                  className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-white rounded-full shadow-md border-2 border-amber-400"
+                  style={{ left: `${sunProgress.pct}%` }}
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col lg:flex-row justify-between items-end gap-10">

@@ -16,7 +16,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                const theme = localStorage.getItem('skycast_theme');
+                if (theme === 'light') {
+                  document.documentElement.classList.remove('dark');
+                } else if (theme === 'dark') {
+                  document.documentElement.classList.add('dark');
+                }
+              } catch (e) {}
+            `,
+          }}
+        />
+      </head>
       <body className="antialiased min-h-screen bg-sky-background text-sky-text-primary flex h-dvh w-full overflow-hidden transition-colors duration-300">
         <Providers>
           <Sidebar />

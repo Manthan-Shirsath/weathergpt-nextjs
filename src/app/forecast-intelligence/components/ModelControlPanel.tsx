@@ -136,10 +136,10 @@ export function ModelControlPanel({
   return (
     <div className="space-y-4">
       {/* Top row: Presets + View Mode Toggles */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-4 bg-slate-900/70 border border-slate-800/80 rounded-2xl backdrop-blur-md">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-4 bg-fi-surface border border-fi-border rounded-2xl">
         {/* Presets */}
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider mr-1 flex items-center gap-1.5">
+          <span className="text-xs font-semibold text-fi-muted uppercase tracking-wider mr-1 flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5 text-blue-400" /> Presets:
           </span>
           <button
@@ -147,7 +147,7 @@ export function ModelControlPanel({
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
               activePreset === 'all'
                 ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/30'
-                : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700/80 hover:text-white'
+                : 'bg-fi-panel text-fi-muted hover:bg-fi-surface hover:text-fi-text border border-fi-border'
             }`}
           >
             All Models
@@ -157,7 +157,7 @@ export function ModelControlPanel({
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
               activePreset === 'physics'
                 ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/30'
-                : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700/80 hover:text-white'
+                : 'bg-fi-panel text-fi-muted hover:bg-fi-surface hover:text-fi-text border border-fi-border'
             }`}
           >
             Physics NWP
@@ -167,7 +167,7 @@ export function ModelControlPanel({
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
               activePreset === 'ai'
                 ? 'bg-purple-600 text-white shadow-sm shadow-purple-500/30'
-                : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700/80 hover:text-white'
+                : 'bg-fi-panel text-fi-muted hover:bg-fi-surface hover:text-fi-text border border-fi-border'
             }`}
           >
             AI / ML Only
@@ -177,7 +177,7 @@ export function ModelControlPanel({
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
               activePreset === 'ecmwf_duo'
                 ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-500/30'
-                : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700/80 hover:text-white'
+                : 'bg-fi-panel text-fi-muted hover:bg-fi-surface hover:text-fi-text border border-fi-border'
             }`}
           >
             ECMWF Duo (Physics vs ML)
@@ -186,22 +186,22 @@ export function ModelControlPanel({
 
         {/* View toggles */}
         <div className="flex items-center gap-3">
-          <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer select-none">
+          <label className="flex items-center gap-2 text-xs text-fi-muted cursor-pointer select-none">
             <input
               type="checkbox"
               checked={showLines}
               onChange={(e) => onToggleLines(e.target.checked)}
-              className="rounded border-slate-700 bg-slate-800 text-blue-500 focus:ring-0 focus:ring-offset-0 cursor-pointer w-3.5 h-3.5"
+              className="rounded border-fi-border bg-fi-panel text-blue-500 focus:ring-0 focus:ring-offset-0 cursor-pointer w-3.5 h-3.5"
             />
             <span>Lines</span>
           </label>
 
-          <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer select-none">
+          <label className="flex items-center gap-2 text-xs text-fi-muted cursor-pointer select-none">
             <input
               type="checkbox"
               checked={showSpreadBand}
               onChange={(e) => onToggleSpreadBand(e.target.checked)}
-              className="rounded border-slate-700 bg-slate-800 text-blue-500 focus:ring-0 focus:ring-offset-0 cursor-pointer w-3.5 h-3.5"
+              className="rounded border-fi-border bg-fi-panel text-blue-500 focus:ring-0 focus:ring-offset-0 cursor-pointer w-3.5 h-3.5"
             />
             <span className="flex items-center gap-1">
               <Layers className="w-3 h-3 text-cyan-400" />
@@ -209,12 +209,12 @@ export function ModelControlPanel({
             </span>
           </label>
 
-          <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer select-none">
+          <label className="flex items-center gap-2 text-xs text-fi-muted cursor-pointer select-none">
             <input
               type="checkbox"
               checked={showDivergenceShading}
               onChange={(e) => onToggleDivergenceShading(e.target.checked)}
-              className="rounded border-slate-700 bg-slate-800 text-red-500 focus:ring-0 focus:ring-offset-0 cursor-pointer w-3.5 h-3.5"
+              className="rounded border-fi-border bg-fi-panel text-red-500 focus:ring-0 focus:ring-offset-0 cursor-pointer w-3.5 h-3.5"
             />
             <span className="flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-red-400/80 animate-pulse" />
@@ -225,7 +225,7 @@ export function ModelControlPanel({
       </div>
 
       {/* Model Selection Pills with Focus Buttons */}
-      <div className="flex flex-wrap items-center gap-2.5 p-3.5 bg-slate-900/50 border border-slate-800/60 rounded-2xl">
+      <div className="flex flex-wrap items-center gap-2.5 p-3.5 bg-fi-surface border border-fi-border rounded-2xl">
         {MODEL_CONFIGS.map(model => {
           const isSelected = activeModels.has(model.id);
           const isOnlyOne = activeModels.size === 1 && isSelected;
@@ -236,8 +236,8 @@ export function ModelControlPanel({
               onClick={() => onToggleModel(model.id)}
               className={`group flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-medium transition cursor-pointer select-none ${
                 isSelected
-                  ? 'bg-slate-800/90 border-slate-600 text-slate-100 shadow-sm'
-                  : 'bg-slate-950/40 border-slate-800/70 text-slate-500 hover:border-slate-700 hover:text-slate-400'
+                  ? 'bg-fi-panel border-fi-border text-fi-text shadow-sm'
+                  : 'bg-fi-surface/60 border-fi-border/60 text-fi-muted hover:border-fi-border hover:text-fi-text'
               }`}
             >
               {/* Checkbox circle with model color */}
@@ -252,9 +252,9 @@ export function ModelControlPanel({
               >
                 {isSelected && (
                   model.id === 'consensus' ? (
-                    <div className="w-1.5 h-1.5 rounded-full bg-slate-900" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-fi-surface" />
                   ) : (
-                    <Check className="w-2.5 h-2.5 text-slate-950 stroke-3" />
+                    <Check className="w-2.5 h-2.5 text-fi-surface stroke-3" />
                   )
                 )}
               </div>
@@ -268,8 +268,8 @@ export function ModelControlPanel({
                 title={isOnlyOne ? "Restore all models" : `Focus only on ${model.name}`}
                 className={`ml-1 px-1.5 py-0.5 rounded text-[10px] tracking-wide uppercase transition cursor-pointer ${
                   isOnlyOne
-                    ? 'bg-blue-500/30 text-blue-300 border border-blue-400/40'
-                    : 'text-slate-500 hover:text-slate-200 hover:bg-slate-700/60'
+                    ? 'bg-blue-500/30 text-blue-400 border border-blue-400/40'
+                    : 'text-fi-muted hover:text-fi-text hover:bg-fi-panel'
                 }`}
               >
                 <Eye className="w-2.5 h-2.5 inline mr-0.5" />
@@ -283,8 +283,8 @@ export function ModelControlPanel({
       {/* Daily Agreement & Overall Disagreement Metric Ribbon */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 items-stretch">
         {/* Left Metric Card: Max Overall Disagreement */}
-        <div className="lg:col-span-3 p-4 bg-linear-to-br from-slate-900/90 via-slate-900/70 to-slate-950/90 border border-slate-800/80 rounded-2xl flex flex-col justify-between">
-          <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+        <div className="lg:col-span-3 p-4 bg-fi-surface border border-fi-border rounded-2xl flex flex-col justify-between">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-fi-muted flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-amber-400" />
             Max Overall Disagreement
           </div>
@@ -292,7 +292,7 @@ export function ModelControlPanel({
             <div className="text-3xl font-bold tracking-tight text-amber-400">
               {getOverallSpreadValue()}
             </div>
-            <p className="text-[11px] text-slate-400 mt-0.5">
+            <p className="text-[11px] text-fi-muted mt-0.5">
               Peak multi-model spread across 7-day forecast
             </p>
           </div>
@@ -307,9 +307,9 @@ export function ModelControlPanel({
         </div>
 
         {/* Right Metric Cards: 7-Day Agreement Strip */}
-        <div className="lg:col-span-9 p-4 bg-slate-900/70 border border-slate-800/80 rounded-2xl flex flex-col justify-between">
+        <div className="lg:col-span-9 p-4 bg-fi-surface border border-fi-border rounded-2xl flex flex-col justify-between">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-fi-muted">
               Daily Agreement (Click day to filter)
             </span>
             {selectedDayIndex !== null && (
@@ -353,10 +353,10 @@ export function ModelControlPanel({
                   className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center justify-between ${
                     isFiltered
                       ? 'bg-blue-600/20 border-blue-500/60 ring-1 ring-blue-500/40 shadow-md'
-                      : 'bg-slate-950/40 border-slate-800 hover:bg-slate-800/50 hover:border-slate-700'
+                      : 'bg-fi-panel border-fi-border hover:bg-fi-surface hover:border-sky-primary/30'
                   }`}
                 >
-                  <div className="text-[11px] font-semibold text-slate-300">
+                  <div className="text-[11px] font-semibold text-fi-muted">
                     {isToday ? 'Today' : day.dayOfWeek}
                   </div>
 
@@ -367,7 +367,7 @@ export function ModelControlPanel({
                     </span>
                   </div>
 
-                  <div className="text-[10px] text-slate-400 font-mono">
+                  <div className="text-[10px] text-fi-muted font-mono">
                     &Delta; {spreadVal}
                   </div>
                 </button>

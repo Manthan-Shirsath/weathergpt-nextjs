@@ -10,7 +10,7 @@ import { LanguageSelector } from './LanguageSelector';
 
 export function Header() {
   return (
-    <header className="h-20 glass-panel border-b-0 border-b-(--border-glass) flex items-center justify-between px-4 lg:px-10 z-10 shrink-0 sticky top-0">
+    <header className="h-20 bg-sky-surface/80 backdrop-blur-2xl border-b border-sky-border flex items-center justify-between px-4 lg:px-10 z-10 shrink-0 sticky top-0 transition-colors duration-300">
       {/* Mobile logo */}
       <div className="flex items-center lg:hidden">
         <div className="bg-linear-to-tr from-sky-primary to-sky-ai p-1.5 rounded-lg shadow-sm mr-2">
@@ -26,12 +26,12 @@ export function Header() {
 
       <div className="flex items-center gap-3">
         <LanguageSelector className="hidden sm:flex" />
-        <Button variant="ghost" isIconOnly className="hidden sm:inline-flex relative rounded-full hover:bg-sky-surface-elevated transition-transform hover:scale-105 text-sky-text-primary" aria-label="Notifications">
+        <Button variant="ghost" isIconOnly className="hidden sm:inline-flex relative rounded-full hover:bg-sky-surface-elevated transition-transform hover:scale-105 text-sky-text-primary border-0" aria-label="Notifications">
           <Bell className="h-5 w-5 text-sky-text-secondary" />
           <span className="absolute top-2 right-2 h-2.5 w-2.5 rounded-full bg-sky-danger border-2 border-sky-surface animate-pulse" />
         </Button>
 
-        <Button variant="ghost" isIconOnly className="rounded-full hover:bg-sky-surface-elevated transition-transform hover:scale-105 text-sky-text-primary" aria-label="Settings">
+        <Button variant="ghost" isIconOnly className="rounded-full hover:bg-sky-surface-elevated transition-transform hover:scale-105 text-sky-text-primary border-0" aria-label="Settings">
           <Settings className="h-5 w-5 text-sky-text-secondary" />
         </Button>
 

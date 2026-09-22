@@ -2,7 +2,7 @@
 
 import React from 'react';
 import type { CanonicalWeatherDataset } from '@/lib/weather/schema';
-import { AlertTriangle, Thermometer, CloudRain, Wind, CloudOff, Info, Zap, ShieldAlert, CheckCircle } from 'lucide-react';
+import { AlertTriangle, Thermometer, CloudRain, Wind, CloudOff, Info, Zap, ShieldAlert, CheckCircle, Clock, ChevronDown, CheckCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { ActiveAlertsResponse } from '@/lib/alerts/schema';
 
@@ -12,50 +12,132 @@ interface RiskItem {
   severity: 'high' | 'medium' | 'low' | 'none';
   icon: React.ComponentType<{ className?: string }>;
   detail: string;
+  actions: string[];
+  peakInfo?: string;
+}
+
+const RISK_ACTIONS: Record<string, string[]> = {
+  heatwave: [
+    'Avoid going out between 11:00 AM and 4:00 PM',
+    'Drink at least 3–4 litres of water throughout the day',
+    'Wear loose, light-colored, breathable cotton clothing',
+    'Never leave children, elderly, or pets inside parked vehicles'
+  ],
+  heat: [
+    'Take breaks in shaded or air-conditioned areas every 30 minutes',
+    'Stay hydrated — drink oral rehydration fluids or water frequently',
+    'Avoid strenuous outdoor activities during peak afternoon hours'
+  ],
+  rain: [
+    'Carry an umbrella or waterproof raincoat if going outside',
+    'Avoid low-lying or flood-prone roads and underpasses',
+    'Check home drainage and secure power connections in damp areas'
+  ],
+  wind: [
+    'Secure loose outdoor objects, balcony furniture, and signage',
+    'Avoid parking or standing under old trees, hoardings, or power lines',
+    'Drive cautiously and keep a firm grip on two-wheeler handles'
+  ],
+  storm: [
+    'Stay indoors inside a sturdy building until the storm passes',
+    'Unplug sensitive electrical equipment and avoid using corded devices',
+    'Stay away from windows, tin roofs, and open fields during lightning'
+  ],
+};
+
+function formatHour(timeStr: string | number): string {
+  try {
+    if (typeof timeStr === 'number') {
+      const h = timeStr % 24;
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      const formattedH = h % 12 || 12;
+      return `${formattedH}:00 ${ampm}`;
+    }
+    const d = new Date(timeStr);
+    if (!isNaN(d.getTime())) {
+      return new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).format(d);
+    }
+    return String(timeStr);
+  } catch {
+    return String(timeStr);
+  }
 }
 
 function assessRisks(data: CanonicalWeatherDataset): RiskItem[] {
-  const { current } = data;
+  const { current, hourly } = data;
   const risks: RiskItem[] = [];
+  const next24 = (hourly || []).slice(0, 24);
+
+  // Peak heat search
+  let maxTempHour = next24[0];
+  if (next24.length > 0) {
+    maxTempHour = next24.reduce((prev, curr) => (curr.temperature_c > prev.temperature_c ? curr : prev), next24[0]);
+  }
+
+  // Peak rain search
+  let maxRainHour = next24[0];
+  if (next24.length > 0) {
+    maxRainHour = next24.reduce((prev, curr) => (curr.precipitation_probability > prev.precipitation_probability ? curr : prev), next24[0]);
+  }
+
+  // Peak wind search
+  let maxWindHour = next24[0];
+  if (next24.length > 0) {
+    maxWindHour = next24.reduce((prev, curr) => (curr.wind_speed_kmh > prev.wind_speed_kmh ? curr : prev), next24[0]);
+  }
 
   // Heatwave threshold
-  if (current.temperature_c >= 40) {
+  if (current.temperature_c >= 40 || (maxTempHour && maxTempHour.temperature_c >= 40)) {
+    const peakStr = maxTempHour ? `Peak heat: ${Math.round(maxTempHour.temperature_c)}°C at ${formatHour(maxTempHour.time || maxTempHour.hour)}` : undefined;
     risks.push({
       id: 'heatwave',
       label: 'Heatwave Risk',
       severity: 'high',
       icon: Thermometer,
-      detail: `Temperature ${Math.round(current.temperature_c)}°C (threshold: ≥40°C). Limit outdoor exposure. Stay hydrated.`,
+      detail: `Temperature reaching ${Math.round(Math.max(current.temperature_c, maxTempHour?.temperature_c || current.temperature_c))}°C (threshold: ≥40°C). Limit outdoor exposure and stay hydrated.`,
+      actions: RISK_ACTIONS.heatwave,
+      peakInfo: peakStr,
     });
-  } else if (current.temperature_c >= 35) {
+  } else if (current.temperature_c >= 35 || (maxTempHour && maxTempHour.temperature_c >= 35)) {
+    const peakStr = maxTempHour ? `Peak heat: ${Math.round(maxTempHour.temperature_c)}°C at ${formatHour(maxTempHour.time || maxTempHour.hour)}` : undefined;
     risks.push({
       id: 'heat',
       label: 'Elevated Heat',
       severity: 'medium',
       icon: Thermometer,
-      detail: `Temperature ${Math.round(current.temperature_c)}°C. Moderate heat — take breaks in shade.`,
+      detail: `Temperature reaching ${Math.round(Math.max(current.temperature_c, maxTempHour?.temperature_c || current.temperature_c))}°C. Moderate heat — take breaks in shade.`,
+      actions: RISK_ACTIONS.heat,
+      peakInfo: peakStr,
     });
   }
 
   // High precipitation
-  if (current.precipitation_probability >= 70) {
+  if (current.precipitation_probability >= 70 || (maxRainHour && maxRainHour.precipitation_probability >= 70)) {
+    const peakProb = Math.max(current.precipitation_probability, maxRainHour?.precipitation_probability || 0);
+    const peakStr = maxRainHour ? `Heaviest rain expected at ${formatHour(maxRainHour.time || maxRainHour.hour)} (${maxRainHour.precipitation_probability}% probability)` : undefined;
     risks.push({
       id: 'rain',
       label: 'Heavy Rain Risk',
-      severity: current.precipitation_probability >= 90 ? 'high' : 'medium',
+      severity: peakProb >= 90 ? 'high' : 'medium',
       icon: CloudRain,
-      detail: `${current.precipitation_probability}% precipitation probability. Current: ${current.precipitation_mm.toFixed(1)} mm. Flooding possible in low-lying areas.`,
+      detail: `${peakProb}% precipitation probability. Flooding possible in low-lying or poorly drained areas.`,
+      actions: RISK_ACTIONS.rain,
+      peakInfo: peakStr,
     });
   }
 
   // High wind
-  if (current.wind_speed_kmh >= 60) {
+  if (current.wind_speed_kmh >= 60 || (maxWindHour && maxWindHour.wind_speed_kmh >= 60)) {
+    const maxWind = Math.max(current.wind_speed_kmh, maxWindHour?.wind_speed_kmh || 0);
+    const peakStr = maxWindHour ? `Peak wind: ${Math.round(maxWindHour.wind_speed_kmh)} km/h at ${formatHour(maxWindHour.time || maxWindHour.hour)}` : undefined;
     risks.push({
       id: 'wind',
       label: 'High Wind Alert',
-      severity: current.wind_speed_kmh >= 90 ? 'high' : 'medium',
+      severity: maxWind >= 90 ? 'high' : 'medium',
       icon: Wind,
-      detail: `Wind speed ${Math.round(current.wind_speed_kmh)} km/h, gusts ${Math.round(current.wind_gusts_kmh)} km/h. Secure outdoor items.`,
+      detail: `Wind speeds reaching ${Math.round(maxWind)} km/h. High potential for falling branches and hazardous driving.`,
+      actions: RISK_ACTIONS.wind,
+      peakInfo: peakStr,
     });
   }
 
@@ -67,6 +149,7 @@ function assessRisks(data: CanonicalWeatherDataset): RiskItem[] {
       severity: 'high',
       icon: Zap,
       detail: 'Active thunderstorm conditions. Avoid open areas and tall structures.',
+      actions: RISK_ACTIONS.storm,
     });
   }
 
@@ -79,14 +162,14 @@ const severityConfig = {
     bg: 'bg-red-500/10',
     border: 'border-red-500/30',
     icon: 'text-red-500',
-    badge: 'bg-red-500/20 text-red-400',
+    badge: 'bg-red-500/20 text-red-500 dark:text-red-400',
   },
   medium: {
     label: 'Medium Risk',
     bg: 'bg-amber-500/10',
     border: 'border-amber-500/30',
     icon: 'text-amber-500',
-    badge: 'bg-amber-500/20 text-amber-400',
+    badge: 'bg-amber-500/20 text-amber-600 dark:text-amber-400',
   },
   low: {
     label: 'Low Risk',
@@ -100,7 +183,7 @@ const severityConfig = {
     bg: 'bg-emerald-500/10',
     border: 'border-emerald-500/30',
     icon: 'text-emerald-500',
-    badge: 'bg-emerald-500/20 text-emerald-400',
+    badge: 'bg-emerald-500/20 text-emerald-500 dark:text-emerald-400',
   },
 };
 
@@ -149,7 +232,7 @@ export function AlertsView({ data, officialAlerts, city, error }: AlertsViewProp
         <div>
           <p className="text-sm font-bold text-sky-text-primary mb-1">SkyCast Computed Risks (Heuristic)</p>
           <p className="text-xs text-sky-text-secondary leading-relaxed">
-            The risk assessments below are heuristic approximations derived from current weather thresholds
+            The risk assessments below are heuristic approximations derived from current and hourly weather thresholds
             (temperature ≥40°C → heatwave, precipitation ≥70% → flood risk, wind ≥60 km/h → high wind, etc.).
             They are <strong>not</strong> official IMD alerts or authoritative disaster warnings.
           </p>
@@ -166,7 +249,7 @@ export function AlertsView({ data, officialAlerts, city, error }: AlertsViewProp
         {officialAlerts?.status === 'ready' && officialAlerts.alerts.length > 0 ? (
           <div className="space-y-4">
             {officialAlerts.alerts.map((alert) => (
-              <div key={alert.externalId} className="p-5 rounded-2xl border bg-red-500/10 border-red-500/30">
+              <div key={alert.externalId} className="p-5 rounded-2xl border bg-red-500/10 border-red-500/30 shadow-sm">
                 <div className="flex items-start gap-4">
                   <div className="p-2.5 rounded-xl bg-red-500/20 text-red-500">
                     <ShieldAlert className="h-5 w-5" />
@@ -233,7 +316,7 @@ export function AlertsView({ data, officialAlerts, city, error }: AlertsViewProp
             return (
               <div
                 key={risk.id}
-                className={cn('p-5 rounded-2xl border', config.bg, config.border)}
+                className={cn('p-5 rounded-2xl border transition-all duration-300 shadow-sm', config.bg, config.border)}
               >
                 <div className="flex items-start gap-4">
                   <div className={cn('p-2.5 rounded-xl', config.bg)}>
@@ -241,12 +324,41 @@ export function AlertsView({ data, officialAlerts, city, error }: AlertsViewProp
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 mb-1.5 flex-wrap">
-                      <h3 className="font-bold text-sky-text-primary">{risk.label}</h3>
-                      <span className={cn('px-2 py-0.5 rounded-full text-xs font-bold uppercase tracking-wide', config.badge)}>
+                      <h3 className="font-bold text-sky-text-primary text-base">{risk.label}</h3>
+                      <span className={cn('px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wide', config.badge)}>
                         {config.label}
                       </span>
                     </div>
-                    <p className="text-sm text-sky-text-secondary leading-relaxed">{risk.detail}</p>
+                    
+                    <p className="text-sm text-sky-text-secondary leading-relaxed mb-3">{risk.detail}</p>
+                    
+                    {/* Peak Timing Badge */}
+                    {risk.peakInfo && (
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-sky-surface-elevated/80 border border-sky-border text-xs font-semibold text-sky-text-primary mb-3">
+                        <Clock className="h-3.5 w-3.5 text-amber-400" />
+                        <span>{risk.peakInfo}</span>
+                      </div>
+                    )}
+
+                    {/* Actionable Steps Dropdown */}
+                    {risk.actions && risk.actions.length > 0 && (
+                      <details className="group/details mt-1 bg-sky-surface/60 border border-sky-border/80 rounded-xl overflow-hidden">
+                        <summary className="flex items-center justify-between px-3.5 py-2 text-xs font-semibold text-sky-text-primary cursor-pointer hover:bg-sky-surface select-none">
+                          <span className="flex items-center gap-1.5 text-sky-primary font-bold">
+                            <CheckCheck className="h-3.5 w-3.5" /> Recommended Actions ({risk.actions.length})
+                          </span>
+                          <ChevronDown className="h-4 w-4 text-sky-text-secondary group-open/details:rotate-180 transition-transform" />
+                        </summary>
+                        <ul className="px-4 py-2.5 space-y-1.5 border-t border-sky-border/40 text-xs text-sky-text-secondary">
+                          {risk.actions.map((act, aIdx) => (
+                            <li key={aIdx} className="flex items-start gap-2">
+                              <span className="text-sky-primary font-bold mt-0.5">•</span>
+                              <span>{act}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </details>
+                    )}
                   </div>
                 </div>
               </div>
@@ -256,7 +368,7 @@ export function AlertsView({ data, officialAlerts, city, error }: AlertsViewProp
       )}
 
       {/* Deferred alert engine notice */}
-      <div className="mt-8 p-5 bg-sky-surface border border-sky-border rounded-2xl">
+      <div className="mt-8 p-5 bg-sky-surface border border-sky-border rounded-2xl shadow-xs">
         <div className="flex items-start gap-3">
           <Zap className="h-5 w-5 text-sky-ai shrink-0 mt-0.5" />
           <div>

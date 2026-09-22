@@ -103,10 +103,10 @@ export function InteractiveChart({
     ].filter(item => item.active);
 
     return (
-      <div className="bg-slate-900/95 border border-slate-700/80 p-3.5 rounded-xl shadow-2xl backdrop-blur-xl text-xs space-y-2 min-w-50">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
-          <span className="font-semibold text-slate-200">{data.formattedTime}</span>
-          <span className="text-[10px] text-slate-400 font-mono">Hour {data.hour}:00</span>
+      <div className="bg-fi-panel border border-fi-border p-3.5 rounded-xl shadow-2xl text-xs space-y-2 min-w-50">
+        <div className="flex items-center justify-between border-b border-fi-border pb-1.5">
+          <span className="font-semibold text-fi-text">{data.formattedTime}</span>
+          <span className="text-[10px] text-fi-muted font-mono">Hour {data.hour}:00</span>
         </div>
 
         <div className="space-y-1">
@@ -114,24 +114,24 @@ export function InteractiveChart({
             <div key={m.id} className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full" style={{ backgroundColor: m.color }} />
-                <span className="text-slate-300 font-medium">{m.label}:</span>
+                <span className="text-fi-muted font-medium">{m.label}:</span>
               </div>
-              <span className="font-mono font-bold text-slate-100">
+              <span className="font-mono font-bold text-fi-text">
                 {m.value.toFixed(1)} {unit}
               </span>
             </div>
           ))}
         </div>
 
-        <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px]">
-          <span className="text-slate-400">Model Spread (&Delta;):</span>
+        <div className="pt-2 border-t border-fi-border flex items-center justify-between text-[11px]">
+          <span className="text-fi-muted">Model Spread (&Delta;):</span>
           <span className={`font-mono font-bold ${data.isDivergent ? 'text-rose-400' : 'text-emerald-400'}`}>
             {data.spread.toFixed(1)} {unit}
           </span>
         </div>
 
         {data.isDivergent && (
-          <div className="text-[10px] text-rose-300 bg-rose-950/50 border border-rose-800/60 px-2 py-0.5 rounded font-medium text-center">
+          <div className="text-[10px] text-rose-500 bg-rose-500/10 border border-rose-500/30 px-2 py-0.5 rounded font-medium text-center">
             &bull; High Model Divergence &bull;
           </div>
         )}
@@ -140,7 +140,7 @@ export function InteractiveChart({
   };
 
   return (
-    <div className="w-full bg-slate-950/70 border border-slate-800/90 rounded-2xl p-4 md:p-6 backdrop-blur-md shadow-xl">
+    <div className="w-full bg-fi-surface border border-fi-border rounded-2xl p-4 md:p-6 shadow-xl">
       <div className="h-100 md:h-115 w-full">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={chartData} margin={{ top: 15, right: 20, left: -10, bottom: 5 }}>
@@ -155,20 +155,20 @@ export function InteractiveChart({
               </linearGradient>
             </defs>
 
-            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--fi-border)" vertical={false} />
 
             <XAxis
               dataKey="formattedTime"
-              stroke="#64748b"
-              fontSize={11}
+              stroke="var(--fi-border)"
+              tick={{ fill: 'var(--fi-muted)', fontSize: 11 }}
               tickLine={false}
               interval={selectedDayIndex !== null ? 2 : 11}
               tickMargin={10}
             />
 
             <YAxis
-              stroke="#64748b"
-              fontSize={11}
+              stroke="var(--fi-border)"
+              tick={{ fill: 'var(--fi-muted)', fontSize: 11 }}
               tickLine={false}
               axisLine={false}
               unit={` ${unit}`}

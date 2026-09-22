@@ -86,7 +86,8 @@ async function handleDeterministicWeatherChat(
       'x-engine': 'deterministic-multi-model',
       'x-decision': decisionResult.decision,
       'x-risk': decisionResult.risk_level,
-      'x-consensus': `${decisionResult.model_intelligence.consensus_score}`
+      'x-consensus': `${decisionResult.model_intelligence.consensus_score}`,
+      'x-detected-domain': parsed.domain || 'general'
     }
   });
 }
@@ -177,7 +178,8 @@ ${JSON.stringify(scenarioEvidence, null, 2)}
       return result.toUIMessageStreamResponse({
         headers: {
           'x-engine': 'groq-llm',
-          'x-scenario-evidence': scenarioEvidence ? JSON.stringify(scenarioEvidence) : ''
+          'x-scenario-evidence': scenarioEvidence ? JSON.stringify(scenarioEvidence) : '',
+          'x-detected-domain': mode || 'general'
         }
       });
     } catch (llmError) {

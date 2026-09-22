@@ -1,16 +1,46 @@
 "use client";
 
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport, type UIMessage, type TextUIPart, isToolUIPart } from 'ai';
 import { ToolResultRenderer } from './ToolResultRenderer';
 import { Button, Card } from '@heroui/react';
-import { Sparkles, Send, User, Mic, Activity, Zap } from 'lucide-react';
+import { Sparkles, Send, User, Mic, Activity } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/lib/i18n/context';
 import { SCENARIOS } from '@/lib/expert-scenarios/registry';
 import { ExpertScenario, ScenarioEvidence } from '@/lib/expert-scenarios/types';
 import { FormattedMessage } from './FormattedMessage';
+
+// ── Session memory helpers ────────────────────────────────────────────────────
+const SESSION_KEY = 'skycast_chat_history';
+const MAX_HISTORY = 5; // number of exchange pairs to keep
+
+type HistoryEntry = { user: string; assistant: string; domain?: string; ts: number };
+
+function loadHistory(): HistoryEntry[] {
+  try {
+    const raw = sessionStorage.getItem(SESSION_KEY);
+    return raw ? (JSON.parse(raw) as HistoryEntry[]) : [];
+  } catch { return []; }
+}
+
+function saveHistory(entries: HistoryEntry[]) {
+  try {
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify(entries.slice(-MAX_HISTORY)));
+  } catch { /* quota exceeded – ignore */ }
+}
+
+// ── Domain badge config ────────────────────────────────────────────────────────
+const DOMAIN_BADGE: Record<string, { label: string; emoji: string; color: string }> = {
+  agriculture: { label: 'Agriculture Expert', emoji: '🌾', color: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30' },
+  disaster:    { label: 'Disaster Agent',     emoji: '🚨', color: 'bg-red-500/15 text-red-600 dark:text-red-400 border-red-500/30' },
+  research:    { label: 'Research Agent',     emoji: '🔬', color: 'bg-violet-500/15 text-violet-600 dark:text-violet-400 border-violet-500/30' },
+  aviation:    { label: 'Aviation Expert',    emoji: '✈️', color: 'bg-sky-500/15 text-sky-600 dark:text-sky-400 border-sky-500/30' },
+  marine:      { label: 'Marine Expert',      emoji: '🌊', color: 'bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/30' },
+  urban:       { label: 'Urban Expert',       emoji: '🏙️', color: 'bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border-indigo-500/30' },
+  general:     { label: 'General Agent',      emoji: '⚡', color: 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30' },
+};
 
 // Stable transport instance (created once, outside component)
 const chatTransport = new DefaultChatTransport({ api: '/api/chat' });
@@ -23,7 +53,15 @@ export function ChatWindow() {
   const { language, t } = useLanguage();
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<any>(null);
-  
+
+  // Session memory
+  const [sessionHistory, setSessionHistory] = useState<HistoryEntry[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
+  useEffect(() => { setSessionHistory(loadHistory()); }, []);
+
+  // Detected domain from response headers
+  const [detectedDomains, setDetectedDomains] = useState<Record<string, string>>({}); // msgId → domain
+
   // Extract city from URL
   const [city, setCity] = useState<string>('Pune');
   useEffect(() => {
@@ -48,23 +86,54 @@ export function ChatWindow() {
       if (evidenceHeader) {
         try {
           const evidence = JSON.parse(evidenceHeader);
-          // Attach it to the most recent assistant message ID when it arrives
           setEvidenceList(prev => [...prev, { id: 'pending', evidence }]);
         } catch (e) {
           console.error('Failed to parse evidence header:', e);
         }
       }
+      // Capture the detected domain for agent badge
+      const domainHeader = response.headers.get('x-detected-domain');
+      if (domainHeader) {
+        setDetectedDomains(prev => ({ ...prev, pending: domainHeader }));
+      }
     }
   });
 
-  // When a new message comes in, update the pending evidence with the message ID
+  // When a new assistant message arrives, finalize pending IDs + save session memory
   useEffect(() => {
     if (messages.length > 0) {
       const lastMessage = messages[messages.length - 1];
       if (lastMessage.role === 'assistant') {
+        // Finalize evidence
         setEvidenceList(prev => prev.map(e => e.id === 'pending' ? { ...e, id: lastMessage.id } : e));
+        // Finalize domain badge
+        setDetectedDomains(prev => {
+          if (!prev.pending) return prev;
+          const { pending, ...rest } = prev;
+          return { ...rest, [lastMessage.id]: pending };
+        });
+        // Save to session memory
+        const userMsg = messages[messages.length - 2];
+        if (userMsg?.role === 'user') {
+          const userText = userMsg.parts.find(p => p.type === 'text') as TextUIPart | undefined;
+          const assistantText = lastMessage.parts.find(p => p.type === 'text') as TextUIPart | undefined;
+          if (userText?.text && assistantText?.text) {
+            const newEntry: HistoryEntry = {
+              user: userText.text,
+              assistant: assistantText.text.slice(0, 200),
+              domain: detectedDomains[lastMessage.id] || domainOverride || 'general',
+              ts: Date.now(),
+            };
+            setSessionHistory(prev => {
+              const updated = [...prev, newEntry].slice(-MAX_HISTORY);
+              saveHistory(updated);
+              return updated;
+            });
+          }
+        }
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
 
   const isLoading = status === 'submitted' || status === 'streaming';
@@ -182,16 +251,48 @@ export function ChatWindow() {
           ))}
         </div>
 
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[11px] font-semibold">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <Zap className="h-3 w-3" />
-            <span>Deterministic Intelligence (Active)</span>
-          </div>
-        </div>
+
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 md:p-8 space-y-6">
+        {/* Session history restore banner */}
+        {messages.length === 0 && sessionHistory.length > 0 && (
+          <div className="max-w-4xl mx-auto">
+            <button
+              type="button"
+              onClick={() => setShowHistory(h => !h)}
+              className="w-full flex items-center justify-between px-4 py-2.5 bg-sky-surface border border-sky-border rounded-xl text-xs text-sky-text-secondary hover:border-sky-primary/40 transition-all mb-2"
+            >
+              <span className="flex items-center gap-2 font-medium">
+                <Activity className="h-3.5 w-3.5" />
+                {sessionHistory.length} earlier exchange{sessionHistory.length > 1 ? 's' : ''} this session
+              </span>
+              <span>{showHistory ? '▲ Hide' : '▾ Show'}</span>
+            </button>
+            {showHistory && (
+              <div className="space-y-2 mb-4 opacity-70">
+                {sessionHistory.map((entry, i) => {
+                  const badge = DOMAIN_BADGE[entry.domain || 'general'];
+                  return (
+                    <div key={i} className="border border-sky-border rounded-xl overflow-hidden text-xs">
+                      <div className="flex items-start gap-2 bg-sky-surface px-4 py-2 border-b border-sky-border/50">
+                        <User className="h-3.5 w-3.5 mt-0.5 shrink-0 text-sky-text-secondary" />
+                        <span className="text-sky-text-primary">{entry.user}</span>
+                      </div>
+                      <div className="px-4 py-2 bg-sky-background">
+                        <span className={cn('inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] font-semibold mb-1', badge?.color)}>
+                          {badge?.emoji} {badge?.label}
+                        </span>
+                        <p className="text-sky-text-secondary line-clamp-2 mt-0.5">{entry.assistant}…</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
         {messages.length === 0 && (
           <div className="h-full flex flex-col items-center justify-center opacity-70 space-y-4 pt-10">
             <div className="bg-linear-to-tr from-sky-primary to-sky-ai p-4 rounded-3xl shadow-glow">
@@ -303,6 +404,19 @@ export function ChatWindow() {
                 m.role === 'user' ? 'items-end' : 'items-start'
               )}
             >
+              {/* Agent badge above assistant messages */}
+              {m.role === 'assistant' && (() => {
+                const domainKey = detectedDomains[m.id] || (domainOverride || 'general');
+                const badge = DOMAIN_BADGE[domainKey] || DOMAIN_BADGE.general;
+                return (
+                  <span className={cn(
+                    'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-semibold self-start',
+                    badge.color
+                  )}>
+                    {badge.emoji} {badge.label}
+                  </span>
+                );
+              })()}
               {m.parts.map((part, idx) => {
                 if (part.type === 'text') {
                   const textPart = part as TextUIPart;
@@ -391,19 +505,22 @@ export function ChatWindow() {
           messages.length > 0 &&
           messages[messages.length - 1].role === 'user' && (
             <div className="flex gap-4 max-w-4xl mx-auto flex-row">
-              <div className="shrink-0 h-10 w-10 rounded-full flex items-center justify-center shadow-sm bg-linear-to-tr from-sky-primary to-sky-ai animate-pulse">
-                <Sparkles className="h-5 w-5 text-white" />
+              <div className="shrink-0 h-10 w-10 rounded-full flex items-center justify-center shadow-sm bg-linear-to-tr from-sky-primary to-sky-ai">
+                <Sparkles className="h-5 w-5 text-white animate-pulse" />
               </div>
-              <div className="px-5 py-3 rounded-2xl shadow-sm bg-sky-surface border border-sky-border rounded-tl-sm flex items-center gap-2">
-                <span className="w-2 h-2 bg-sky-text-secondary rounded-full animate-bounce" />
-                <span
-                  className="w-2 h-2 bg-sky-text-secondary rounded-full animate-bounce"
-                  style={{ animationDelay: '0.2s' }}
-                />
-                <span
-                  className="w-2 h-2 bg-sky-text-secondary rounded-full animate-bounce"
-                  style={{ animationDelay: '0.4s' }}
-                />
+              <div className="flex flex-col gap-1.5">
+                <span className={cn(
+                  'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-semibold self-start',
+                  (DOMAIN_BADGE[domainOverride] || DOMAIN_BADGE.general).color
+                )}>
+                  {(DOMAIN_BADGE[domainOverride] || DOMAIN_BADGE.general).emoji}{' '}
+                  {(DOMAIN_BADGE[domainOverride] || DOMAIN_BADGE.general).label} · Thinking…
+                </span>
+                <div className="px-5 py-3.5 rounded-2xl rounded-tl-sm shadow-sm bg-sky-surface border border-sky-border flex items-center gap-2">
+                  <span className="w-2 h-2 bg-sky-primary rounded-full animate-bounce" />
+                  <span className="w-2 h-2 bg-sky-primary rounded-full animate-bounce" style={{ animationDelay: '0.18s' }} />
+                  <span className="w-2 h-2 bg-sky-primary rounded-full animate-bounce" style={{ animationDelay: '0.36s' }} />
+                </div>
               </div>
             </div>
           )}

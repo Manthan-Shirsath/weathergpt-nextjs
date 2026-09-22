@@ -6,7 +6,8 @@ import { WeatherMetrics } from "@/components/weather/WeatherMetrics";
 import { ForecastChart } from "@/components/weather/ForecastChart";
 import { DailyForecast } from "@/components/weather/DailyForecast";
 import { DashboardLocationBar } from "@/components/weather/DashboardLocationBar";
-import { AlertTriangle, CloudOff, Thermometer, ShieldAlert } from "lucide-react";
+import { TemperatureRangeBar } from "@/components/weather/TemperatureRangeBar";
+import { AlertTriangle, CloudOff, ShieldAlert } from "lucide-react";
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { parseLocationCookie } from '@/lib/location/store';
@@ -118,20 +119,7 @@ export default async function DashboardPage({
         
         <WeatherMetrics data={data} />
 
-        {/* Today's temperature context */}
-        {data.daily && data.daily.length > 0 && (
-          <div className="flex items-center gap-3 p-4 bg-sky-surface border border-sky-border rounded-2xl">
-            <Thermometer className="h-5 w-5 text-orange-400 shrink-0" />
-            <span className="text-sm text-sky-text-secondary">
-              Today&apos;s range:{' '}
-              <strong className="text-sky-text-primary">
-                {Math.round(data.daily[0].low_c)}° – {Math.round(data.daily[0].high_c)}°C
-              </strong>
-              {' '}·{' '}
-              <span className="text-sky-text-secondary">Precipitation probability: {data.daily[0].rain_probability_pct}%</span>
-            </span>
-          </div>
-        )}
+        <TemperatureRangeBar data={data} />
         
         <ForecastChart data={data} />
         
