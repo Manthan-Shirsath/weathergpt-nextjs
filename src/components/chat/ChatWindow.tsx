@@ -5,7 +5,7 @@ import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport, type UIMessage, type TextUIPart, isToolUIPart } from 'ai';
 import { ToolResultRenderer } from './ToolResultRenderer';
 import { Button, Card } from '@heroui/react';
-import { Sparkles, Send, User, Mic, Activity } from 'lucide-react';
+import { Sparkles, Send, User, Mic, Activity, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/lib/i18n/context';
 import { SCENARIOS } from '@/lib/expert-scenarios/registry';
@@ -201,8 +201,8 @@ export function ChatWindow() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (e?: React.FormEvent | React.KeyboardEvent | React.MouseEvent) => {
+    if (e) e.preventDefault();
     const trimmed = input.trim();
     if (!trimmed || isLoading) return;
     setActiveScenarioId(null);
@@ -537,33 +537,52 @@ export function ChatWindow() {
       <div className="p-4 md:p-6 bg-sky-background border-t border-sky-border shrink-0">
         <form onSubmit={handleSubmit} className="max-w-4xl mx-auto relative flex items-center">
           <input
-            className="w-full bg-sky-surface-elevated border border-sky-border rounded-full pl-6 pr-24 py-4 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-primary/50 transition-all shadow-sm"
+            className="w-full bg-sky-surface-elevated border border-sky-border rounded-full pl-6 pr-24 py-4 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-primary/50 transition-all shadow-sm text-sky-text-primary"
             value={input}
             placeholder={t.chat.placeholder}
             onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSubmit(e);
+              }
+            }}
             disabled={isLoading}
           />
-          <div className="absolute right-2 flex items-center gap-1">
-            <Button
-              isIconOnly
-              variant="ghost"
+          <div className="absolute right-2.5 flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={toggleListening}
+              disabled={isLoading}
+              title={isListening ? "Stop listening" : "Voice input"}
+              aria-label="Voice input"
               className={cn(
-                "rounded-full transition-colors",
-                isListening ? "bg-sky-danger/20 text-sky-danger animate-pulse" : "text-sky-text-secondary hover:text-sky-primary"
+                "w-9 h-9 rounded-full flex items-center justify-center transition-all",
+                isListening 
+                  ? "bg-red-500/20 text-red-500 animate-pulse" 
+                  : "text-slate-400 hover:text-sky-500 hover:bg-sky-500/10 dark:hover:bg-slate-700/50"
               )}
-              onPress={toggleListening}
-              isDisabled={isLoading}
             >
-              <Mic className="h-5 w-5" />
-            </Button>
-            <Button
-              isIconOnly
+              <Mic className="h-4 w-4" />
+            </button>
+            <button
               type="submit"
-              isDisabled={isLoading || !input.trim()}
-              className="rounded-full bg-sky-primary text-white hover:bg-sky-primary-hover disabled:opacity-50"
+              disabled={isLoading || !input.trim()}
+              title="Send message (Enter)"
+              aria-label="Send message"
+              className={cn(
+                "w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 shrink-0",
+                input.trim() && !isLoading
+                  ? "bg-blue-600 hover:bg-blue-500 text-white shadow-md shadow-blue-500/25 hover:scale-105 active:scale-95 cursor-pointer"
+                  : "bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-70"
+              )}
             >
-              <Send className="h-4 w-4 ml-1" />
-            </Button>
+              {isLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin text-slate-400" />
+              ) : (
+                <Send className="h-4 w-4 translate-x-[-0.5px] translate-y-[0.5px]" />
+              )}
+            </button>
           </div>
         </form>
       </div>
